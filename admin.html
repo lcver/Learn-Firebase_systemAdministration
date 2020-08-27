@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Firebase - Sistem Administration</title>
+    <style>
+        body{
+            padding: 20px;
+        }
+
+        .hidden{
+            display:none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="column">
+        <h2>Login Admin</h2>
+        <input type="email" id="emailForm"> <br><br>
+        <input type="password" id="passwordForm"> <br><br>
+        
+        <button id="loginBtn">Login</button>
+        <button id="logoutBtn" class="hidden">Logout</button>        
+    </div>
+
+    <hr>
+
+    <div class="column">
+        <h2>Input Data</h2>
+        <input type="text" id="titleText">
+        <input type="text" id="descText">
+
+        <button type="button" id="submitBtn">Submit</button>
+    </div>
+
+    <script defer src="https://www.gstatic.com/firebasejs/7.19.0/firebase-app.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/7.19.0/firebase-auth.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/7.19.0/firebase-database.js"></script>
+
+    <script>
+        // Your web app's Firebase configuration
+        var firebaseConfig = {
+            apiKey: "AIzaSyD64k1M-JCS_aOzZeBOldG3-KIAacfq-zU",
+            authDomain: "sistem-administration.firebaseapp.com",
+            databaseURL: "https://sistem-administration.firebaseio.com",
+            projectId: "sistem-administration",
+            storageBucket: "sistem-administration.appspot.com",
+            messagingSenderId: "622787739810",
+            appId: "1:622787739810:web:7270e37cc77fee9fa757fb",
+            measurementId: "G-676GT9J8BX"
+        };
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        
+        //=== Firebase Auth
+        var auth = firebase.auth();
+
+        // elements
+        var emailForm = document.getElementById('emailForm');
+        var passwordForm = document.getElementById('passwordForm');
+        var loginBtn = document.getElementById('loginBtn');
+        var logoutBtn = document.getElementById('logoutBtn');
+
+        loginBtn.addEventListener('click', handleLogin);
+        logoutBtn.addEventListener('click', handleLogout);
+
+
+        //== Login
+        function handleLogin()
+        {
+            auth.signInWithEmailAndPassword(emailForm.value, passwordForm.value)
+                .then(function(data) {
+                    console.log('login')
+                    location.reload();
+                })
+                .catch(function(err) {
+                    console.log('Gagal Login');
+
+                    console.log(err);
+                })
+        }
+
+        function handleLogout()
+        {
+            auth.signOut.then(function() {
+                console.log('== Berhasil Logout ==');
+            }).catch(function(err) {
+                console.log('== Failed Logout ==');
+                console.log(err);
+            })
+        }
+
+        //== Status Auth
+        auth.onAuthStateChanged(function(user) {
+            if(user) {
+                logoutBtn.classList.remove('hidden')
+                loginBtn.classList.add('hidden')
+            } else {
+                console.log('== User Belum Sign ==')
+                logoutBtn.classList.add('hidden')
+                loginBtn.classList.remove('hidden')
+            }
+        })
+
+
+        //== REALTIME DATABASE
+        var database = firebase.database();
+
+        var blogsRef = database.ref('blogs');
+
+        // elements
+        var titleText = document.getElementById('titleText');
+        var descText = document.getElementById('descText');
+        var submitBtn = document.getElementById('submitBtn');
+
+        submitBtn.addEventListener('click', function() {
+            blogsRef.push({
+                title: titleText.value,
+                desc: descText.value
+            })
+
+
+            titleText.value = "";
+            descText.value = "";
+        });
+
+        blogsRef.on('child_added', dataAdded);
+
+        function dataAdded(){
+            console.log('Berhasil ditambah');
+        }
+
+    </script>
+    
+</body>
+</html>
