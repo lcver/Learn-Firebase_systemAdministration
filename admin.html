@@ -85,7 +85,7 @@
 
         function handleLogout()
         {
-            auth.signOut.then(function() {
+            auth.signOut().then(function() {
                 console.log('== Berhasil Logout ==');
             }).catch(function(err) {
                 console.log('== Failed Logout ==');
@@ -98,10 +98,14 @@
             if(user) {
                 logoutBtn.classList.remove('hidden')
                 loginBtn.classList.add('hidden')
+                emailForm.classList.add('hidden')
+                passwordForm.classList.add('hidden')
             } else {
                 console.log('== User Belum Sign ==')
                 logoutBtn.classList.add('hidden')
                 loginBtn.classList.remove('hidden')
+                emailForm.classList.remove('hidden')
+                passwordForm.classList.remove('hidden')
             }
         })
 
