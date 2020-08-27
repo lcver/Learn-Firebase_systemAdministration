@@ -36,6 +36,20 @@
         <button type="button" id="submitBtn">Submit</button>
     </div>
 
+    <hr>
+
+    <div class="column">
+        <h2>Blogs</h2>
+        <div class="column">
+            <ul id="blogs">
+                <li>
+                    <p style="font-weight: bold; font-size: 20px;">Title</p>
+                    <span>desc</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
     <script src="https://www.gstatic.com/firebasejs/7.19.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.19.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.19.0/firebase-database.js"></script>
@@ -115,6 +129,9 @@
 
         var blogsRef = database.ref('blogs');
 
+        //== show 
+        blogsRef.on('value', showData, showErr);
+
         // elements
         var titleText = document.getElementById('titleText');
         var descText = document.getElementById('descText');
@@ -135,6 +152,29 @@
 
         function dataAdded(){
             console.log('Berhasil ditambah');
+        }
+
+        //== Show Data
+        function showData(items)
+        {
+            var _blog = document.getElementById('blogs')
+            var _content = "";
+
+            items.forEach(function(child) {
+                _content +=
+                    '<li>'+
+                        '<p style="font-weight: bold; font-size: 20px;">'+child.val().title+'</p>'+
+                        '<span>'+child.val().desc+'</span>'+
+                    '</li>'
+            })
+
+            _blog.innerHTML = _content;
+        }
+
+        function showErr(err)
+        {
+            console.log('== View Error ==');
+            console.log(err);
         }
 
     </script>
