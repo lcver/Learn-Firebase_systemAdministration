@@ -43,8 +43,7 @@
         <div class="column">
             <ul id="blogs">
                 <li>
-                    <p style="font-weight: bold; font-size: 20px;">Title</p>
-                    <span>desc</span>
+                    <span><span style="font-weight: bold; font-size: 20px;">Title</span> | desc</span>
                 </li>
             </ul>
         </div>
@@ -88,7 +87,10 @@
             auth.signInWithEmailAndPassword(emailForm.value, passwordForm.value)
                 .then(function(data) {
                     console.log('login')
-                    location.reload();
+                    // location.reload();
+                    
+                    emailForm.value = ""
+                    passwordForm.value = ""
                 })
                 .catch(function(err) {
                     console.log('Gagal Login');
@@ -149,6 +151,7 @@
         });
 
         blogsRef.on('child_added', dataAdded);
+        blogsRef.on('child_removed', dataRemoved);
 
         function dataAdded(){
             console.log('Berhasil ditambah');
@@ -162,9 +165,10 @@
 
             items.forEach(function(child) {
                 _content +=
-                    '<li>'+
-                        '<p style="font-weight: bold; font-size: 20px;">'+child.val().title+'</p>'+
-                        '<span>'+child.val().desc+'</span>'+
+                    '<li id="'+child.key+'">'+
+                        '<span><span style="font-weight: bold; font-size: 20px;">'+child.val().title+'</span> | '+child.val().desc+'</span>'+
+                        '<span style="margin-left:20px;">| <a href="#" onClick="editData(\''+child.key+'\')">edit</a> |</span>'+
+                        '<span> <a href="#" onclick="deleteData(\''+child.key+'\')">delete</a> |</span>'+
                     '</li>'
             })
 
@@ -176,6 +180,20 @@
             console.log('== View Error ==');
             console.log(err);
         }
+
+        //== delete data
+        function deleteData(dataId) {
+            console.log('Data berhasil dihapus');
+            console.log(dataId);
+
+            database.ref('blogs/' + dataId ).remove();
+        }
+
+        function dataRemoved()
+        {
+            console.log('Data berhasil dihapus')
+        }
+
 
     </script>
     
