@@ -34,6 +34,7 @@
         <input type="text" id="descText">
 
         <button type="button" id="submitBtn">Submit</button>
+        <button type="button" id="saveBtn">Simpan</button>
     </div>
 
     <hr>
@@ -138,6 +139,20 @@
         var titleText = document.getElementById('titleText');
         var descText = document.getElementById('descText');
         var submitBtn = document.getElementById('submitBtn');
+        var saveBtn = document.getElementById('saveBtn');
+
+        saveBtn.addEventListener('click', function() {
+            var dataId = document.getElementById('saveBtn').getAttribute('data-id')
+
+            blogsRef.child(dataId).update({
+                title: titleText.value,
+                desc: descText.value
+            })
+
+
+            titleText.value = "";
+            descText.value = "";
+        });
 
         submitBtn.addEventListener('click', function() {
             blogsRef.push({
@@ -167,7 +182,7 @@
                 _content +=
                     '<li id="'+child.key+'">'+
                         '<span><span style="font-weight: bold; font-size: 20px;">'+child.val().title+'</span> | '+child.val().desc+'</span>'+
-                        '<span style="margin-left:20px;">| <a href="#" onClick="editData(\''+child.key+'\')">edit</a> |</span>'+
+                        '<span style="margin-left:20px;">| <a href="#" onclick="editData(\''+child.key+'\')">edit</a> |</span>'+
                         '<span> <a href="#" onclick="deleteData(\''+child.key+'\')">delete</a> |</span>'+
                     '</li>'
             })
@@ -194,7 +209,18 @@
             console.log('Data berhasil dihapus')
         }
 
+        //== edit data
+        function editData(dataId) {
 
+            document.getElementById('saveBtn').setAttribute('data-id',dataId)
+
+            var _blog = document.getElementById(dataId);
+
+            blogsRef.child(dataId).once('value', function(snapshot) {
+                titleText.value = snapshot.val().title
+                descText.value = snapshot.val().desc
+            })
+        }
     </script>
     
 </body>
